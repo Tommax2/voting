@@ -1,109 +1,272 @@
-/* Reset some default styles */
+/* School Voting Theme */
 body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Arial, sans-serif;
-  background: #fff;
-  color: #222;
+  background: #f4f8fb;
+  color: #1a237e;
   min-height: 100vh;
+  /* Add background image */
+  background-image: url('/logo.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  /* Optional: Add overlay for better text readability */
+  position: relative;
+}
+
+/* Optional: Add a semi-transparent overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(244, 248, 251, 0.8); /* Semi-transparent overlay */
+  z-index: -1;
 }
 
 /* Container for voting site */
 .voting-container {
-  max-width: 480px;
-  margin: 40px auto;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-  padding: 32px 24px;
+  max-width: 500px;
+  margin: 48px auto;
+  background: rgba(255, 255, 255, 0.95); /* Make slightly transparent */
+  border-radius: 18px;
+  box-shadow: 0 6px 32px rgba(26,35,126,0.15); /* Slightly stronger shadow */
+  padding: 36px 28px;
+  border: 2px solid #e3eafc;
+  backdrop-filter: blur(10px); /* Add blur effect */
 }
 
 /* Headings */
 h1, h2, h3 {
-  color: #222;
-  margin-bottom: 16px;
+  color: #283593;
+  margin-bottom: 18px;
+  text-align: center;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 28px;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e3eafc;
+  padding-bottom: 10px;
+}
+
+h2 {
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+}
+
+/* Poll form and options */
+.poll-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.poll-options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 10px;
 }
 
 /* Poll options */
 .poll-options {
   list-style: none;
   padding: 0;
-  margin: 0 0 24px 0;
+  margin: 0 0 26px 0;
 }
 
 .poll-options li {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .poll-option-btn {
   width: 100%;
-  padding: 12px 0;
-  background: #f7f7f7;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 1rem;
-  color: #222;
+  padding: 14px 0;
+  background: rgba(240, 244, 255, 0.9); /* Make slightly transparent */
+  border: 1.5px solid #b6c6f5;
+  border-radius: 10px;
+  font-size: 1.05rem;
+  color: #1a237e;
   cursor: pointer;
   transition: background 0.2s, border 0.2s;
+  font-weight: 500;
 }
 
 .poll-option-btn:hover,
 .poll-option-btn.selected {
-  background: #e6f0ff;
-  border-color: #90caf9;
+  background: rgba(227, 234, 252, 0.95);
+  border-color: #5c6bc0;
+}
+
+/* Votes display */
+.Votes {
+  display: flex;
+  align-items: center;
+  background: rgba(247, 250, 255, 0.9);
+  border-radius: 8px;
+  padding: 10px 14px;
+  border: 1px solid #e3eafc;
+  transition: box-shadow 0.2s;
+}
+
+.Votes:hover {
+  box-shadow: 0 2px 8px rgba(26,35,126,0.06);
+  background: rgba(227, 234, 252, 0.9);
+}
+
+.Votes label {
+  flex: 1;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.Votes p {
+  margin: 0;
+  font-weight: 500;
+  color: #283593;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.Votes progress {
+  width: 100%;
+  height: 8px;
+  border-radius: 4px;
+  background: #e3eafc;
+  margin: 4px 0;
+}
+
+.Votes small {
+  color: #5c6bc0;
+  font-size: 0.875rem;
+  display: block;
+  text-align: right;
+}
+
+.logout-btn{
+  background: rgba(227, 234, 252, 0.9);
+  color: #1a237e;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  margin-left: 16px;
 }
 
 /* Submit button */
 .submit-btn {
   width: 100%;
-  padding: 14px 0;
-  background: #1976d2;
+  padding: 15px 0;
+  background: #3949ab;
   color: #fff;
   border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
+  border-radius: 10px;
+  font-size: 1.15rem;
+  font-weight: 700;
   cursor: pointer;
   transition: background 0.2s;
-  margin-top: 12px;
+  margin-top: 16px;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(26,35,126,0.08);
 }
 
 .submit-btn:hover {
-  background: #1565c0;
+  background: #283593;
 }
 
 /* Results */
 .poll-results {
-  margin-top: 24px;
+  margin-top: 28px;
 }
 
 .result-bar {
-  height: 18px;
-  background: #e3f2fd;
-  border-radius: 6px;
-  margin-bottom: 8px;
+  height: 20px;
+  background: #e3eafc;
+  border-radius: 8px;
+  margin-bottom: 10px;
   overflow: hidden;
   position: relative;
 }
 
 .result-bar-fill {
-  background: #1976d2;
+  background: #3949ab;
   height: 100%;
-  border-radius: 6px 0 0 6px;
+  border-radius: 8px 0 0 8px;
   transition: width 0.5s;
 }
 
 .result-label {
-  font-size: 0.95rem;
-  color: #222;
-  margin-bottom: 4px;
+  font-size: 1rem;
+  color: #1a237e;
+  margin-bottom: 6px;
   display: flex;
   justify-content: space-between;
+  font-weight: 500;
+}
+
+/* Radio button custom style for school theme */
+input[type="radio"].appearance-none {
+  accent-color: #3949ab;
+  width: 18px;
+  height: 18px;
+  margin-right: 10px;
+  vertical-align: middle;
 }
 
 /* Responsive */
 @media (max-width: 600px) {
+  html{
+    font-size: 16px;
+  }
   .voting-container {
-    padding: 18px 6px;
+    padding: 16px 4px;
+  }
+  h1 {
+    font-size: 1.8rem;
+  }
+  h2 {
+    font-size: 1.2rem;
+  }
+  .poll-option-btn {
+    padding: 12px 0;
+    font-size: 1rem;
+  }
+  .submit-btn {
+    padding: 12px 0;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 350px) {
+  .voting-container {
+    padding: 12px 2px;
+  }
+  h1 {
+    font-size: 16px;
+  }
+  h2 {
+    font-size: 13px;
+  }
+  .poll-option-btn {
+    padding: 10px 0;
+    font-size: 0.95rem;
+  }
+  .submit-btn {
+    padding: 10px 0;
+    font-size: 0.95rem;
   }
 }
