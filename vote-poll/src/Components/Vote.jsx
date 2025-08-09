@@ -4,7 +4,6 @@ export default function Vote({
   name,
   text,
   percentage,
-  votes,
   checked,
   onChange,
 }) {
@@ -26,7 +25,6 @@ export default function Vote({
         <progress value={parseInt(percentage) || 0} max="100">
           {percentage}%
         </progress>
-        <small> {votes} votes</small>
       </label>
     </div>
   );

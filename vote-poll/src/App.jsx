@@ -52,7 +52,7 @@ function App() {
   async function getQuestionsFromDB() {
     try {
       console.log("Fetching questions from database...");
-      
+
       let allQuestions = [];
       let offset = 0;
       const limit = 100; // Fetch in batches of 100
@@ -61,16 +61,16 @@ function App() {
       while (hasMore) {
         const response = await databases.listDocuments(DB_ID, COLLECTION_ID, [
           Query.limit(limit),
-          Query.offset(offset)
+          Query.offset(offset),
         ]);
 
         allQuestions = [...allQuestions, ...response.documents];
-        
+
         // Check if there are more documents
         hasMore = response.documents.length === limit;
         offset += limit;
       }
-      
+
       console.log(`Total questions loaded: ${allQuestions.length}`);
       setQuestions(allQuestions);
     } catch (error) {
@@ -98,10 +98,12 @@ function App() {
       }
     } catch (error) {
       console.log("Error checking user votes:", error);
-      
+
       // Handle permission errors (401) - assume user hasn't voted
       if (error.code === 401) {
-        console.log("Permission denied checking votes - assuming user hasn't voted yet");
+        console.log(
+          "Permission denied checking votes - assuming user hasn't voted yet"
+        );
         setHasVoted(false);
         setSubmitted(false);
       } else {
@@ -123,7 +125,7 @@ function App() {
       return userVotes.documents.length > 0;
     } catch (error) {
       console.log("Error checking user votes before submit:", error);
-      
+
       // If permission error, we can't check, so allow the attempt
       // The create operation will fail if duplicate exists
       if (error.code === 401) {
@@ -196,7 +198,9 @@ function App() {
           voteRecordError.code === 409 ||
           voteRecordError.message?.includes("unique") ||
           voteRecordError.message?.includes("duplicate") ||
-          voteRecordError.message?.includes("Document with the requested ID already exists")
+          voteRecordError.message?.includes(
+            "Document with the requested ID already exists"
+          )
         ) {
           setError("This email address has already been used to vote!");
           setHasVoted(true);
@@ -218,7 +222,7 @@ function App() {
           update = { votes_2: question.votes_2 + 1 };
         } else if (selectedVote === question.answer_3) {
           update = { votes_3: question.votes_3 + 1 };
-        }else if (selectedVote === question.answer_4) {
+        } else if (selectedVote === question.answer_4) {
           update = { votes_4: question.votes_4 + 1 };
         } else if (selectedVote === question.answer_5) {
           update = { votes_5: question.votes_5 + 1 };
@@ -242,7 +246,7 @@ function App() {
           update = { votes_14: question.votes_14 + 1 };
         } else if (selectedVote === question.answer_15) {
           update = { votes_15: question.votes_15 + 1 };
-        }else {
+        } else {
           return;
         }
 
@@ -363,79 +367,63 @@ function App() {
                 <h4>{question.text}</h4>
                 <div className="result-stats">
                   <div className="vote-option">
-                    <span className="option-name">{question.answer_1}:</span>
-                    <span className="vote-count">{question.votes_1} votes</span>
+                    <span className="option-name">{question.answer_1}</span>
                   </div>
                   <div className="vote-option">
-                    <span className="option-name">{question.answer_2}:</span>
-                    <span className="vote-count">{question.votes_2} votes</span>
+                    <span className="option-name">{question.answer_2}</span>
                   </div>
                   <div className="vote-option">
-                    <span className="option-name">{question.answer_3}:</span>
-                    <span className="vote-count">{question.votes_3} votes</span>
+                    <span className="option-name">{question.answer_3}</span>
                   </div>
                   <div className="vote-option">
-                    <span className="option-name">{question.answer_4}:</span>
-                    <span className="vote-count">{question.votes_4} votes</span>
-                </div>
-                  <div className="vote-option">
-                    <span className="option-name">{question.answer_5}:</span>
-                    <span className="vote-count">{question.votes_5} votes</span>      
-              </div>
-                  <div className="vote-option">
-                    <span className="option-name">{question.answer_6}:</span>
-                    <span className="vote-count">{question.votes_6} votes</span>
+                    <span className="option-name">{question.answer_4}</span>
                   </div>
                   <div className="vote-option">
-                    <span className="option-name">{question.answer_7}:</span>
-                    <span className="vote-count">{question.votes_7} votes</span>
+                    <span className="option-name">{question.answer_5}</span>
                   </div>
                   <div className="vote-option">
-                    <span className="option-name">{question.answer_8}:</span>
-                    <span className="vote-count">{question.votes_8} votes</span>
+                    <span className="option-name">{question.answer_6}</span>
                   </div>
                   <div className="vote-option">
-                    <span className="option-name">{question.answer_9}:</span>
-                    <span className="vote-count">{question.votes_9} votes</span>
+                    <span className="option-name">{question.answer_7}</span>
+                  </div>
+                  <div className="vote-option">
+                    <span className="option-name">{question.answer_8}</span>
+                  </div>
+                  <div className="vote-option">
+                    <span className="option-name">{question.answer_9}</span>
                   </div>
                 </div>
                 <div className="vote-option">
-                  <span className="option-name">{question.answer_10}:</span>
-                  <span className="vote-count">{question.votes_10} votes</span>
+                  <span className="option-name">{question.answer_10}</span>
                 </div>
                 <div className="vote-option">
-                  <span className="option-name">{question.answer_11}:</span>
-                  <span className="vote-count">{question.votes_11} votes</span>
+                  <span className="option-name">{question.answer_11}</span>
                 </div>
                 <div className="vote-option">
-                  <span className="option-name">{question.answer_12}:</span>
-                  <span className="vote-count">{question.votes_12} votes</span>
-                </div>    
-                <div className="vote-option">
-                  <span className="option-name">{question.answer_13}:</span>
-                  <span className="vote-count">{question.votes_13} votes</span>
+                  <span className="option-name">{question.answer_12}</span>
                 </div>
                 <div className="vote-option">
-                  <span className="option-name">{question.answer_14}:</span>
-                  <span className="vote-count">{question.votes_14} votes</span>
+                  <span className="option-name">{question.answer_13}</span>
                 </div>
                 <div className="vote-option">
-                  <span className="option-name">{question.answer_15}:</span>
-                  <span className="vote-count">{question.votes_15} votes</span>
+                  <span className="option-name">{question.answer_14}</span>
+                </div>
+                <div className="vote-option">
+                  <span className="option-name">{question.answer_15}</span>
                 </div>
               </div>
             ))}
           </div>
-          
-          
         </div>
       ) : (
         <div className="voting-container">
           <p className="voting-instructions">
-            Select <strong>one</strong> option for each category, then submit your votes.
+            Select <strong>one</strong> option for each category, then submit
+            your votes.
           </p>
           <p className="vote-restriction-notice">
-            <strong>Important:</strong> You can only vote once. 
+            <strong>Important:</strong> You can only vote once.
           </p>
 
           {questions.length === 0 ? (
