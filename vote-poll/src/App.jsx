@@ -242,8 +242,7 @@ function App() {
           update = { votes_14: question.votes_14 + 1 };
         } else if (selectedVote === question.answer_15) {
           update = { votes_15: question.votes_15 + 1 };
-        }
-         else {
+        }else {
           return;
         }
 
@@ -375,6 +374,54 @@ function App() {
                     <span className="option-name">{question.answer_3}:</span>
                     <span className="vote-count">{question.votes_3} votes</span>
                   </div>
+                  <div className="vote-option">
+                    <span className="option-name">{question.answer_4}:</span>
+                    <span className="vote-count">{question.votes_4} votes</span>
+                </div>
+                  <div className="vote-option">
+                    <span className="option-name">{question.answer_5}:</span>
+                    <span className="vote-count">{question.votes_5} votes</span>      
+              </div>
+                  <div className="vote-option">
+                    <span className="option-name">{question.answer_6}:</span>
+                    <span className="vote-count">{question.votes_6} votes</span>
+                  </div>
+                  <div className="vote-option">
+                    <span className="option-name">{question.answer_7}:</span>
+                    <span className="vote-count">{question.votes_7} votes</span>
+                  </div>
+                  <div className="vote-option">
+                    <span className="option-name">{question.answer_8}:</span>
+                    <span className="vote-count">{question.votes_8} votes</span>
+                  </div>
+                  <div className="vote-option">
+                    <span className="option-name">{question.answer_9}:</span>
+                    <span className="vote-count">{question.votes_9} votes</span>
+                  </div>
+                </div>
+                <div className="vote-option">
+                  <span className="option-name">{question.answer_10}:</span>
+                  <span className="vote-count">{question.votes_10} votes</span>
+                </div>
+                <div className="vote-option">
+                  <span className="option-name">{question.answer_11}:</span>
+                  <span className="vote-count">{question.votes_11} votes</span>
+                </div>
+                <div className="vote-option">
+                  <span className="option-name">{question.answer_12}:</span>
+                  <span className="vote-count">{question.votes_12} votes</span>
+                </div>    
+                <div className="vote-option">
+                  <span className="option-name">{question.answer_13}:</span>
+                  <span className="vote-count">{question.votes_13} votes</span>
+                </div>
+                <div className="vote-option">
+                  <span className="option-name">{question.answer_14}:</span>
+                  <span className="vote-count">{question.votes_14} votes</span>
+                </div>
+                <div className="vote-option">
+                  <span className="option-name">{question.answer_15}:</span>
+                  <span className="vote-count">{question.votes_15} votes</span>
                 </div>
               </div>
             ))}
