@@ -5,12 +5,10 @@ export default function Signup({ onLoginClick, onSignup }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState({});
-  const [acceptTerms, setAcceptTerms] = useState(false);
 
   function validateForm() {
     const newErrors = {};
@@ -34,18 +32,18 @@ export default function Signup({ onLoginClick, onSignup }) {
       newErrors.password = "Password is required";
     } else if (password.length < 4) {
       newErrors.password = "Password must be at least 4 characters";
-   
     }
 
+    setFieldErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
 
   async function handleSignup(e) {
     e.preventDefault();
 
-    // Clear previous errors
     setError("");
     setFieldErrors({});
 
-    // Validate form
     if (!validateForm()) return;
 
     setLoading(true);
@@ -53,7 +51,6 @@ export default function Signup({ onLoginClick, onSignup }) {
     try {
       console.log("Creating account for:", email);
 
-      // Create the user account with 'unique()' to let Appwrite generate valid ID
       const user = await account.create(
         'unique()',
         email,
@@ -62,15 +59,12 @@ export default function Signup({ onLoginClick, onSignup }) {
       );
       console.log("Account created successfully:", user);
 
-      // Create session - try newer method first, then fallback
       try {
         await account.createEmailPasswordSession(email, password);
       } catch (sessionError) {
-        console.log("Trying legacy session creation method...");
         try {
           await account.createEmailSession(email, password);
         } catch (legacyError) {
-          // Last resort fallback
           await account.createSession(email, password);
         }
       }
@@ -80,17 +74,15 @@ export default function Signup({ onLoginClick, onSignup }) {
     } catch (err) {
       console.error("Signup error:", err);
 
-      // Handle specific error types
       if (err.code === 409) {
         setError(
           "This email is already registered. Please use a different email or try logging in."
         );
       } else if (err.code === 400) {
         const errorMessage = err.message?.toLowerCase() || '';
-        
         if (errorMessage.includes('password')) {
           setError(
-            "Password does not meet requirements. Please ensure it's at least 8 characters with uppercase, lowercase, and numbers."
+            "Password does not meet requirements. Please ensure it's at least 4 characters."
           );
         } else if (errorMessage.includes('email')) {
           setError("Please enter a valid email address.");
@@ -117,7 +109,6 @@ export default function Signup({ onLoginClick, onSignup }) {
   }
 
   function handleFieldChange(field, value) {
-    // Update the field value
     switch (field) {
       case "name":
         setName(value);
@@ -128,23 +119,11 @@ export default function Signup({ onLoginClick, onSignup }) {
       case "password":
         setPassword(value);
         break;
-      case "confirmPassword":
-        setConfirmPassword(value);
-        break;
     }
-
-    // Clear field error when user starts typing
     if (fieldErrors[field]) {
       setFieldErrors((prev) => ({ ...prev, [field]: "" }));
     }
   }
-
-  function getPasswordStrength(password) {
-    let strength = 0;
-    if (password.length >= 4) strength++;
-  }
-
-  const passwordStrength = getPasswordStrength(password);
 
   return (
     <div className="auth-container">
@@ -232,100 +211,9 @@ export default function Signup({ onLoginClick, onSignup }) {
                 {showPassword ? "👁️" : "👁️‍🗨️"}
               </button>
             </div>
-
-            {password && (
-              <div className="password-strength">
-                <div className="password-strength-bar">
-                  <div
-                    className="password-strength-fill"
-                    style={{
-                      width: `${
-                        getPasswordStrength(password).level === "weak"
-                          ? 33
-                          : getPasswordStrength(password).level === "medium"
-                          ? 66
-                          : 100
-                      }%`,
-                      backgroundColor: passwordStrength.color,
-                    }}
-                  ></div>
-                </div>
-                <span
-                  className="password-strength-text"
-                  style={{ color: passwordStrength.color }}
-                >
-                  {passwordStrength.level} password
-                </span>
-              </div>
-            )}
-
             {fieldErrors.password && (
               <span id="password-error" className="error-message">
                 {fieldErrors.password}
-              </span>
-            )}
-          </div>
-
-          <div className="input-group">
-            <label htmlFor="confirmPassword" className="input-label">
-              Confirm Password
-            </label>
-            <input
-              id="confirmPassword"
-              type={showPassword ? "text" : "password"}
-              placeholder="Confirm your password"
-              value={confirmPassword}
-              onChange={(e) =>
-                handleFieldChange("confirmPassword", e.target.value)
-              }
-              className={`input-field ${
-                fieldErrors.confirmPassword ? "input-error" : ""
-              }`}
-              required
-              autoComplete="new-password"
-              disabled={loading}
-              aria-describedby={
-                fieldErrors.confirmPassword
-                  ? "confirm-password-error"
-                  : undefined
-              }
-            />
-            {fieldErrors.confirmPassword && (
-              <span id="confirm-password-error" className="error-message">
-                {fieldErrors.confirmPassword}
-              </span>
-            )}
-          </div>
-
-          <div className="checkbox-group">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={acceptTerms}
-                onChange={(e) => {
-                  setAcceptTerms(e.target.checked);
-                  if (fieldErrors.terms) {
-                    setFieldErrors((prev) => ({ ...prev, terms: "" }));
-                  }
-                }}
-                disabled={loading}
-              />
-              <span className="checkbox-text">
-                I accept the{" "}
-                <button
-                  type="button"
-                  className="link-button"
-                  onClick={() =>
-                    alert("Terms and conditions would be shown here")
-                  }
-                >
-                  Terms and Conditions
-                </button>
-              </span>
-            </label>
-            {fieldErrors.terms && (
-              <span className="error-message terms-error">
-                {fieldErrors.terms}
               </span>
             )}
           </div>
