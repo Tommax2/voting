@@ -52,7 +52,7 @@ export default function Signup({ onLoginClick, onSignup }) {
       console.log("Creating account for:", email);
 
       const user = await account.create(
-        'unique()',
+        "unique()",
         email,
         password,
         name.trim()
@@ -79,18 +79,19 @@ export default function Signup({ onLoginClick, onSignup }) {
           "This email is already registered. Please use a different email or try logging in."
         );
       } else if (err.code === 400) {
-        const errorMessage = err.message?.toLowerCase() || '';
-        if (errorMessage.includes('password')) {
+        const errorMessage = err.message?.toLowerCase() || "";
+        if (errorMessage.includes("password")) {
           setError(
             "Password does not meet requirements. Please ensure it's at least 4 characters."
           );
-        } else if (errorMessage.includes('email')) {
+        } else if (errorMessage.includes("email")) {
           setError("Please enter a valid email address.");
-        } else if (errorMessage.includes('userid')) {
+        } else if (errorMessage.includes("userid")) {
           setError("Account creation failed. Please try again.");
         } else {
           setError(
-            err.message || "Invalid input. Please check your information and try again."
+            err.message ||
+              "Invalid input. Please check your information and try again."
           );
         }
       } else if (err.code === 429) {

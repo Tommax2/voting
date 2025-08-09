@@ -1,1 +1,197 @@
+/* Card style for auth and voting containers */
+.auth-container, .voting-container, .success-container {
+  animation: fadeInUp 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+  box-shadow: 0 8px 32px rgba(57, 73, 171, 0.18);
+  border-radius: 22px;
+  background: linear-gradient(135deg, #fffbe7 0%, #e3f0ff 100%);
+  margin: 32px auto;
+  padding: 32px 20px;
+  max-width: 480px;
+  position: relative;
+  border: 2.5px solid #ffd54f;
+}
+
+/* Fade in up animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Button animation and style */
+.submit-button, .logout-btn, .link-button {
+  background: linear-gradient(90deg, #3949ab 60%, #ffb300 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 1.08rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(255,193,7,0.13);
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  margin-top: 18px;
+  outline: none;
+  letter-spacing: 0.5px;
+}
+
+.submit-button:hover, .logout-btn:hover, .link-button:hover {
+  background: linear-gradient(90deg, #ffb300 60%, #3949ab 100%);
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 4px 16px rgba(255,193,7,0.18);
+}
+
+.submit-button.loading, .logout-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid #fff;
+  border-top: 3px solid #ffb300;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Input fields */
+.input-field, .password-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #ffd54f;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, #fffde7 60%, #e3f2fd 100%);
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+.input-field:focus, .password-input:focus {
+  border-color: #3949ab;
+  box-shadow: 0 2px 8px rgba(57,73,171,0.13);
+  outline: none;
+}
+
+.input-error {
+  border-color: #e53935 !important;
+  background: #fff0f0;
+}
+
+.input-label {
+  font-weight: 700;
+  color: #ffb300;
+  font-size: 1.02rem;
+  letter-spacing: 0.5px;
+}
+
+.error-banner, .error-message {
+  background: linear-gradient(90deg, #ffeaea 60%, #fffde7 100%);
+  color: #e53935;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 10px 0 0 0;
+  font-size: 1rem;
+  animation: shake 0.3s;
+  border: 1.5px solid #e53935;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-6px); }
+  40%, 60% { transform: translateX(6px); }
+}
+
+/* Password toggle button */
+.password-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.15rem;
+  margin-left: 8px;
+  color: #ffb300;
+  transition: color 0.2s;
+}
+
+.password-toggle:hover {
+  color: #3949ab;
+}
+
+.password-input-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Auth switch link */
+.link-button {
+  background: none;
+  color: #3949ab;
+  border: none;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.link-button.primary:hover {
+  color: #ffb300;
+}
+
+/* Auth card title/subtitle */
+.auth-title {
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #3949ab;
+  margin-bottom: 6px;
+  letter-spacing: 1.5px;
+  text-shadow: 0 2px 8px #ffd54f33;
+}
+
+.auth-subtitle {
+  color: #ffb300;
+  font-size: 1.08rem;
+  margin-bottom: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Success container animation */
+.success-container {
+  border: 2.5px solid #43a047;
+  background: linear-gradient(135deg, #e8f5e9 0%, #fffde7 100%);
+  animation: popIn 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.95);}
+  80% { opacity: 1; transform: scale(1.03);}
+  100% { opacity: 1; transform: scale(1);}
+}
+
+/* Responsive for small screens */
+@media (max-width: 480px) {
+  .auth-container, .voting-container, .success-container {
+    padding: 16px 4px;
+    max-width: 98vw;
+  }
+  .auth-title {
+    font-size: 1.15rem;
+  }
+}
 
