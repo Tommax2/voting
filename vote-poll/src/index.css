@@ -284,6 +284,21 @@ input[type="radio"].appearance-none {
 }
 
 @media (max-width: 350px) {
+  .app-header {
+    padding: 12px 0 8px 0;
+    border-radius: 0 0 12px 12px;
+    margin-bottom: 12px;
+  }
+  .app-header h1 {
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    padding-bottom: 4px;
+  }
+  .user-info {
+    gap: 8px;
+    font-size: 0.85rem;
+    flex-direction: column;
+  }
   .voting-container {
     padding: 12px 2px;
   }
