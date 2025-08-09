@@ -218,7 +218,32 @@ function App() {
           update = { votes_2: question.votes_2 + 1 };
         } else if (selectedVote === question.answer_3) {
           update = { votes_3: question.votes_3 + 1 };
-        } else {
+        }else if (selectedVote === question.answer_4) {
+          update = { votes_4: question.votes_4 + 1 };
+        } else if (selectedVote === question.answer_5) {
+          update = { votes_5: question.votes_5 + 1 };
+        } else if (selectedVote === question.answer_6) {
+          update = { votes_6: question.votes_6 + 1 };
+        } else if (selectedVote === question.answer_7) {
+          update = { votes_7: question.votes_7 + 1 };
+        } else if (selectedVote === question.answer_8) {
+          update = { votes_8: question.votes_8 + 1 };
+        } else if (selectedVote === question.answer_9) {
+          update = { votes_9: question.votes_9 + 1 };
+        } else if (selectedVote === question.answer_10) {
+          update = { votes_10: question.votes_10 + 1 };
+        } else if (selectedVote === question.answer_11) {
+          update = { votes_11: question.votes_11 + 1 };
+        } else if (selectedVote === question.answer_12) {
+          update = { votes_12: question.votes_12 + 1 };
+        } else if (selectedVote === question.answer_13) {
+          update = { votes_13: question.votes_13 + 1 };
+        } else if (selectedVote === question.answer_14) {
+          update = { votes_14: question.votes_14 + 1 };
+        } else if (selectedVote === question.answer_15) {
+          update = { votes_15: question.votes_15 + 1 };
+        }
+         else {
           return;
         }
 
