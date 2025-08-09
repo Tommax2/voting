@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { account } from "../server/appwrite";
 
-export default function Signup({ onLoginClick, onSignup }) {
+export default function SignUp({ onLoginClick, onSignup }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
