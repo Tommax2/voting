@@ -32,28 +32,11 @@ export default function Signup({ onLoginClick, onSignup }) {
     // Password validation
     if (!password) {
       newErrors.password = "Password is required";
-    } else if (password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-      newErrors.password =
-        "Password must contain uppercase, lowercase, and number";
+    } else if (password.length < 4) {
+      newErrors.password = "Password must be at least 4 characters";
+   
     }
 
-    // Confirm password validation
-    if (!confirmPassword) {
-      newErrors.confirmPassword = "Please confirm your password";
-    } else if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    // Terms validation
-    if (!acceptTerms) {
-      newErrors.terms = "You must accept the terms and conditions";
-    }
-
-    setFieldErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }
 
   async function handleSignup(e) {
     e.preventDefault();
@@ -158,14 +141,7 @@ export default function Signup({ onLoginClick, onSignup }) {
 
   function getPasswordStrength(password) {
     let strength = 0;
-    if (password.length >= 8) strength += 25;
-    if (/[a-z]/.test(password)) strength += 25;
-    if (/[A-Z]/.test(password)) strength += 25;
-    if (/\d/.test(password)) strength += 25;
-
-    if (strength < 50) return { level: "weak", color: "#ef4444" };
-    if (strength < 75) return { level: "medium", color: "#f59e0b" };
-    return { level: "strong", color: "#10b981" };
+    if (password.length >= 4) strength++;
   }
 
   const passwordStrength = getPasswordStrength(password);
