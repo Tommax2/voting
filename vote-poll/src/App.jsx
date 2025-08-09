@@ -10,7 +10,7 @@ import {
 } from "./server/appwrite";
 import Question from "./Components/Question";
 import Login from "./Components/Login";
-import SignUp from "./Components/SignUp";
+import Signup from "./Components/Signup";
 
 function App() {
   const [questions, setQuestions] = useState([]);
