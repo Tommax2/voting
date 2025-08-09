@@ -1,12 +1,6 @@
 import React from "react";
 
-export default function Vote({
-  name,
-  text,
-  percentage,
-  checked,
-  onChange,
-}) {
+export default function Vote({ name, text, percentage, checked, onChange }) {
   return (
     <div className="Votes">
       <input
