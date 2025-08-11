@@ -12,14 +12,7 @@ export default function Vote({ name, text, percentage, checked, onChange }) {
         checked={checked}
         onChange={onChange}
       />
-      <label htmlFor={text} className="pointer">
-        <p>
-          {text} <span>{percentage || 0}%</span>
-        </p>
-        <progress value={parseInt(percentage) || 0} max="100">
-          {percentage}%
-        </progress>
-      </label>
+      
     </div>
   );
 }
