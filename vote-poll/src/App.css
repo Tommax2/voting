@@ -12,3 +12,17 @@
 .app-header h1{
   color: white;
 }
+.user-info{
+  color: white;
+}
+@media screen and (max-width: 380px) {
+  .app-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 10px 0;
+  }
+  .app-header h1 {
+    font-size: calc(12px + 2vmin);
+    margin-bottom: 10px;
+  }
+}

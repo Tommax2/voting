@@ -23,7 +23,7 @@ function generateAuthorizedMatricNumbers() {
   }
   
   // SCI21MCB001 to SCI21MCB200 (2021 batch: 200 students)
-  for (let i = 1; i <= 200; i++) {
+  for (let i = 1; i <= 165; i++) {
     const number = i.toString().padStart(3, '0');
     authorized.push(`SCI21MCB${number}`);
   }
