@@ -2,7 +2,7 @@ import { Client, Databases, Account, Query } from 'appwrite';
 const client = new Client();
 const DB_ID = "687be6170031b7b5f967";
 const COLLECTION_ID = "687be633002c24ecd228";
-const USER_VOTES_COLLECTION_ID ="687d4a230034a777e251"
+const USER_VOTES_COLLECTION_ID ="user-votes"
 
 client
   .setEndpoint('https://cloud.appwrite.io/v1')

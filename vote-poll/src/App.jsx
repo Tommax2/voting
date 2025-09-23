@@ -12,6 +12,101 @@ import Question from "./Components/Question";
 import Login from "./Components/Login";
 import SignUp from "./Components/Signup";
 
+// MCB DEPARTMENT ACCESS CONTROL
+function generateAuthorizedMatricNumbers() {
+  const authorized = [];
+  
+  // SCI20MCB001 to SCI20MCB150 (2020 batch: 150 students)
+  for (let i = 1; i <= 150; i++) {
+    const number = i.toString().padStart(3, '0');
+    authorized.push(`SCI20MCB${number}`);
+  }
+  
+  // SCI21MCB001 to SCI21MCB200 (2021 batch: 200 students)
+  for (let i = 1; i <= 200; i++) {
+    const number = i.toString().padStart(3, '0');
+    authorized.push(`SCI21MCB${number}`);
+  }
+  
+  return authorized;
+}
+
+const AUTHORIZED_MATRIC_NUMBERS = generateAuthorizedMatricNumbers();
+
+// Function to extract and format matric number from user input
+function getMatricFromUser(user) {
+  // Check user name field first
+  if (user.name) {
+    return formatMatricNumber(user.name.trim());
+  }
+  
+  // Check email prefix as fallback
+  const emailPrefix = user.email.split('@')[0];
+  return formatMatricNumber(emailPrefix);
+}
+
+// Function to format matric number to standard format
+function formatMatricNumber(input) {
+  if (!input) return null;
+  
+  const cleaned = input.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  
+  // Pattern matching for MCB department
+  const patterns = [
+    /^(SCI\d{2}MCB\d{3})$/,
+    /^(SCI\d{2}MCB\d{3})$/i
+  ];
+  
+  for (const pattern of patterns) {
+    const match = cleaned.match(pattern);
+    if (match) {
+      return match[1].toUpperCase();
+    }
+  }
+  
+  // Try: 20MCB001 -> SCI20MCB001
+  let constructedMatric = cleaned.match(/^(\d{2}MCB\d{3})$/);
+  if (constructedMatric) {
+    return `SCI${constructedMatric[1]}`;
+  }
+  
+  // Try: MCB001 with year detection
+  constructedMatric = cleaned.match(/^(MCB\d{3})$/);
+  if (constructedMatric) {
+    return `SCI20${constructedMatric[1]}`;
+  }
+  
+  return cleaned;
+}
+
+// Validation function for MCB matric numbers
+function validateMCBMatricNumber(matricNumber) {
+  if (!matricNumber) {
+    return {
+      isValid: false,
+      message: "Matric number is required"
+    };
+  }
+  
+  const pattern = /^SCI(20|21)MCB\d{3}$/;
+  
+  if (!pattern.test(matricNumber)) {
+    return {
+      isValid: false,
+      message: "Invalid matric number format. Expected format: SCIxxMCBxxx (e.g., SCI20MCB001)"
+    };
+  }
+  
+  if (!AUTHORIZED_MATRIC_NUMBERS.includes(matricNumber)) {
+    return {
+      isValid: false,
+      message: "Matric number not in authorized range. Must be SCI20MCB001-150 or SCI21MCB001-200"
+    };
+  }
+  
+  return { isValid: true };
+}
+
 function App() {
   const [questions, setQuestions] = useState([]);
   const [votes, setVotes] = useState({});
@@ -34,12 +129,30 @@ function App() {
     try {
       const currentUser = await account.get();
       console.log("User authenticated:", currentUser);
+      
+      // Extract and format matric number
+      const userMatric = getMatricFromUser(currentUser);
+      console.log("Extracted matric number:", userMatric);
+      
+      // Validate matric number
+      const validation = validateMCBMatricNumber(userMatric);
+      if (!validation.isValid) {
+        setError(`Access denied: ${validation.message}`);
+        await account.deleteSession("current");
+        setUser(null);
+        return;
+      }
+      
+      console.log("User authorized with matric number:", userMatric);
+      
+      // Add matric number to user object for easy access
+      currentUser.matricNumber = userMatric;
       setUser(currentUser);
 
-      // Load questions and check if user has voted
+      // Load questions and check if user has voted (using matric number)
       await Promise.all([
         getQuestionsFromDB(),
-        checkIfUserVoted(currentUser.email),
+        checkIfUserVoted(userMatric),
       ]);
     } catch (error) {
       console.log("No authenticated user:", error);
@@ -55,7 +168,7 @@ function App() {
 
       let allQuestions = [];
       let offset = 0;
-      const limit = 100; // Fetch in batches of 100
+      const limit = 100;
       let hasMore = true;
 
       while (hasMore) {
@@ -65,8 +178,6 @@ function App() {
         ]);
 
         allQuestions = [...allQuestions, ...response.documents];
-
-        // Check if there are more documents
         hasMore = response.documents.length === limit;
         offset += limit;
       }
@@ -79,12 +190,12 @@ function App() {
     }
   }
 
-  async function checkIfUserVoted(userEmail) {
+  async function checkIfUserVoted(userMatric) {
     try {
       const userVotes = await databases.listDocuments(
         DB_ID,
         USER_VOTES_COLLECTION_ID,
-        [Query.equal("email", userEmail)]
+        [Query.equal("matricNumber", userMatric)]
       );
 
       const voted = userVotes.documents.length > 0;
@@ -92,74 +203,68 @@ function App() {
 
       if (voted) {
         setSubmitted(true);
-        console.log("User has already voted with this email");
+        console.log("User has already voted with matric number:", userMatric);
       } else {
-        console.log("User has not voted yet with this email");
+        console.log("User has not voted yet with matric number:", userMatric);
       }
     } catch (error) {
       console.log("Error checking user votes:", error);
 
-      // Handle permission errors (401) - assume user hasn't voted
       if (error.code === 401) {
-        console.log(
-          "Permission denied checking votes - assuming user hasn't voted yet"
-        );
+        console.log("Permission denied checking votes - assuming user hasn't voted yet");
         setHasVoted(false);
         setSubmitted(false);
       } else {
-        // For other errors, also assume not voted to allow attempt
         setHasVoted(false);
         setSubmitted(false);
       }
     }
   }
 
-  // Helper function to double-check voting status before submission
-  async function checkIfUserVotedBeforeSubmit(userEmail) {
+  async function checkIfUserVotedBeforeSubmit(userMatric) {
     try {
       const userVotes = await databases.listDocuments(
         DB_ID,
         USER_VOTES_COLLECTION_ID,
-        [Query.equal("email", userEmail)]
+        [Query.equal("matricNumber", userMatric)]
       );
       return userVotes.documents.length > 0;
     } catch (error) {
       console.log("Error checking user votes before submit:", error);
 
-      // If permission error, we can't check, so allow the attempt
-      // The create operation will fail if duplicate exists
       if (error.code === 401) {
         console.log("Cannot verify voting status due to permissions");
         return false;
       }
-      return false; // If we can't check, allow the attempt
+      return false;
     }
   }
 
   function handleVoteSelect(questionId, answer) {
     if (hasVoted) {
-      setError("This email address has already been used to vote!");
+      setError("This matric number has already been used to vote!");
       return;
     }
 
     setVotes((prev) => ({ ...prev, [questionId]: answer }));
-    setError(""); // Clear any previous errors
+    setError("");
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
 
-    // Only check if we have permission to do so
+    const userMatric = user.matricNumber;
+
+    // Double-check voting status
     try {
-      const hasAlreadyVoted = await checkIfUserVotedBeforeSubmit(user.email);
+      const hasAlreadyVoted = await checkIfUserVotedBeforeSubmit(userMatric);
       if (hasAlreadyVoted) {
-        setError("This email address has already been used to vote!");
+        setError("This matric number has already been used to vote!");
         setHasVoted(true);
         setSubmitted(true);
         return;
       }
     } catch (error) {
-      // If we can't check due to permissions, continue with submission
       console.log("Skipping pre-submit vote check due to permissions");
     }
 
@@ -176,38 +281,35 @@ function App() {
     try {
       console.log("Submitting votes:", votes);
 
-      // FIRST: Record that this email has voted (to prevent race conditions)
+      // FIRST: Record that this matric number has voted
       try {
         await databases.createDocument(
           DB_ID,
           USER_VOTES_COLLECTION_ID,
           "unique()",
           {
-            email: user.email,
+            matricNumber: userMatric,
             userId: user.$id,
             timestamp: new Date().toISOString(),
-            votedQuestions: selectedVotes,
-            userName: user.name || user.email,
+            votedQuestions: selectedVotes
           }
         );
-        console.log("User vote recorded successfully for email:", user.email);
+        console.log("User vote recorded successfully for matric number:", userMatric);
       } catch (voteRecordError) {
         console.error("Error recording vote:", voteRecordError);
-        // If this fails, it might be because the email already exists
+        
         if (
           voteRecordError.code === 409 ||
           voteRecordError.message?.includes("unique") ||
           voteRecordError.message?.includes("duplicate") ||
-          voteRecordError.message?.includes(
-            "Document with the requested ID already exists"
-          )
+          voteRecordError.message?.includes("Document with the requested ID already exists")
         ) {
-          setError("This email address has already been used to vote!");
+          setError("This matric number has already been used to vote!");
           setHasVoted(true);
           setSubmitted(true);
           return;
         }
-        throw voteRecordError; // Re-throw if it's a different error
+        throw voteRecordError;
       }
 
       // THEN: Update vote counts for each question
@@ -216,39 +318,26 @@ function App() {
         if (!selectedVote) return;
 
         let update = {};
-        if (selectedVote === question.answer_1) {
-          update = { votes_1: question.votes_1 + 1 };
-        } else if (selectedVote === question.answer_2) {
-          update = { votes_2: question.votes_2 + 1 };
-        } else if (selectedVote === question.answer_3) {
-          update = { votes_3: question.votes_3 + 1 };
-        } else if (selectedVote === question.answer_4) {
-          update = { votes_4: question.votes_4 + 1 };
-        } else if (selectedVote === question.answer_5) {
-          update = { votes_5: question.votes_5 + 1 };
-        } else if (selectedVote === question.answer_6) {
-          update = { votes_6: question.votes_6 + 1 };
-        } else if (selectedVote === question.answer_7) {
-          update = { votes_7: question.votes_7 + 1 };
-        } else if (selectedVote === question.answer_8) {
-          update = { votes_8: question.votes_8 + 1 };
-        } else if (selectedVote === question.answer_9) {
-          update = { votes_9: question.votes_9 + 1 };
-        } else if (selectedVote === question.answer_10) {
-          update = { votes_10: question.votes_10 + 1 };
-        } else if (selectedVote === question.answer_11) {
-          update = { votes_11: question.votes_11 + 1 };
-        } else if (selectedVote === question.answer_12) {
-          update = { votes_12: question.votes_12 + 1 };
-        } else if (selectedVote === question.answer_13) {
-          update = { votes_13: question.votes_13 + 1 };
-        } else if (selectedVote === question.answer_14) {
-          update = { votes_14: question.votes_14 + 1 };
-        } else if (selectedVote === question.answer_15) {
-          update = { votes_15: question.votes_15 + 1 };
-        } else {
-          return;
+        const answerKeys = [
+          'answer_1', 'answer_2', 'answer_3', 'answer_4', 'answer_5',
+          'answer_6', 'answer_7', 'answer_8', 'answer_9', 'answer_10',
+          'answer_11', 'answer_12', 'answer_13', 'answer_14', 'answer_15'
+        ];
+        
+        const voteKeys = [
+          'votes_1', 'votes_2', 'votes_3', 'votes_4', 'votes_5',
+          'votes_6', 'votes_7', 'votes_8', 'votes_9', 'votes_10',
+          'votes_11', 'votes_12', 'votes_13', 'votes_14', 'votes_15'
+        ];
+
+        for (let i = 0; i < answerKeys.length; i++) {
+          if (selectedVote === question[answerKeys[i]]) {
+            update[voteKeys[i]] = (question[voteKeys[i]] || 0) + 1;
+            break;
+          }
         }
+
+        if (Object.keys(update).length === 0) return;
 
         return databases.updateDocument(
           DB_ID,
@@ -268,7 +357,7 @@ function App() {
       setSubmitted(true);
       setHasVoted(true);
 
-      console.log("Votes submitted successfully for email:", user.email);
+      console.log("Votes submitted successfully for matric number:", userMatric);
     } catch (error) {
       console.error("Error submitting votes:", error);
       setError("Failed to submit votes. Please try again.");
@@ -336,9 +425,9 @@ function App() {
   return (
     <main className="app-main">
       <header className="app-header">
-        <h1>SUGFUL AWARD CATEGORY</h1>
+        <h1>MCB DINNER NIGHT AWARD</h1>
         <div className="user-info">
-          <span>Welcome, {user.name || user.email}</span>
+          <span>Welcome, {user.matricNumber}</span>
           {hasVoted && <span className="voted-badge">✅ Already Voted</span>}
           <button onClick={handleLogout} className="logout-btn">
             Logout
@@ -357,7 +446,7 @@ function App() {
           <h2>✅ Thank you for voting!</h2>
           <p>Your votes have been recorded successfully.</p>
           <p className="vote-restriction-notice">
-            <strong>Note:</strong> Each email address can only vote once.
+            <strong>Note:</strong> Each matric number can only vote once.
           </p>
 
           <div className="results-section">
@@ -366,51 +455,18 @@ function App() {
               <div key={question.$id} className="result-item">
                 <h4>{question.text}</h4>
                 <div className="result-stats">
-                  <div className="vote-option">
-                    <span className="option-name">{question.answer_1}</span>
-                  </div>
-                  <div className="vote-option">
-                    <span className="option-name">{question.answer_2}</span>
-                  </div>
-                  <div className="vote-option">
-                    <span className="option-name">{question.answer_3}</span>
-                  </div>
-                  <div className="vote-option">
-                    <span className="option-name">{question.answer_4}</span>
-                  </div>
-                  <div className="vote-option">
-                    <span className="option-name">{question.answer_5}</span>
-                  </div>
-                  <div className="vote-option">
-                    <span className="option-name">{question.answer_6}</span>
-                  </div>
-                  <div className="vote-option">
-                    <span className="option-name">{question.answer_7}</span>
-                  </div>
-                  <div className="vote-option">
-                    <span className="option-name">{question.answer_8}</span>
-                  </div>
-                  <div className="vote-option">
-                    <span className="option-name">{question.answer_9}</span>
-                  </div>
-                </div>
-                <div className="vote-option">
-                  <span className="option-name">{question.answer_10}</span>
-                </div>
-                <div className="vote-option">
-                  <span className="option-name">{question.answer_11}</span>
-                </div>
-                <div className="vote-option">
-                  <span className="option-name">{question.answer_12}</span>
-                </div>
-                <div className="vote-option">
-                  <span className="option-name">{question.answer_13}</span>
-                </div>
-                <div className="vote-option">
-                  <span className="option-name">{question.answer_14}</span>
-                </div>
-                <div className="vote-option">
-                  <span className="option-name">{question.answer_15}</span>
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(num => {
+                    const answer = question[`answer_${num}`];
+                    const votes = question[`votes_${num}`] || 0;
+                    if (!answer) return null;
+                    
+                    return (
+                      <div key={num} className="vote-option">
+                        <span className="option-name">{answer}</span>
+                        <span className="vote-count">({votes} votes)</span>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))}
@@ -419,11 +475,10 @@ function App() {
       ) : (
         <div className="voting-container">
           <p className="voting-instructions">
-            Select <strong>one</strong> option for each category, then submit
-            your votes.
+            Select <strong>one</strong> option for each category, then submit your votes.
           </p>
           <p className="vote-restriction-notice">
-            <strong>Important:</strong> You can only vote once.
+            <strong>Important:</strong> Each matric number can only vote once.
           </p>
 
           {questions.length === 0 ? (
@@ -472,5 +527,31 @@ function App() {
     </main>
   );
 }
+
+// Utility function for testing matric numbers
+window.checkMatric = function(matricNumber) {
+  const formatted = formatMatricNumber(matricNumber);
+  const validation = validateMCBMatricNumber(formatted);
+  
+  console.log(`Matric: ${matricNumber}`);
+  console.log(`Formatted: ${formatted}`);
+  console.log(`Valid: ${validation.isValid}`);
+  if (!validation.isValid) {
+    console.log(`Error: ${validation.message}`);
+  }
+  
+  return validation.isValid;
+};
+
+console.log("MCB Department Access Control initialized");
+console.log(`Total authorized students: ${AUTHORIZED_MATRIC_NUMBERS.length}`);
+console.log("Authorized ranges: SCI20MCB001-150, SCI21MCB001-200");
+console.log("Sample authorized matrics:", 
+  AUTHORIZED_MATRIC_NUMBERS.slice(0, 3), 
+  "...", 
+  AUTHORIZED_MATRIC_NUMBERS.slice(147, 153), 
+  "...", 
+  AUTHORIZED_MATRIC_NUMBERS.slice(-3)
+);
 
 export default App;
