@@ -25,4 +25,8 @@
     font-size: calc(12px + 2vmin);
     margin-bottom: 10px;
   }
+  .voted-badge {
+    font-size: calc(8px + 1vmin);
+    padding: 3px 6px;
+  }
 }
