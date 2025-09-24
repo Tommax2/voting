@@ -16,10 +16,11 @@ import SignUp from "./Components/Signup";
 function generateAuthorizedMatricNumbers() {
   const authorized = [];
   const SPECIAL_MATRIC_NUMBERS = [
-    'SCI21MCB170', // Additional 2021 student
+  
     'SCI21MCB801',  // Special case - possibly transfer/late admission
-    'SCI21MCB180', // Special case - possibly transfer/late admission
+   
     'SCI22MCB162'
+
   ];
 
   // SCI20MCB001 to SCI20MCB150 (2020 batch: 150 students)
@@ -29,7 +30,7 @@ function generateAuthorizedMatricNumbers() {
   }
   
   // SCI21MCB001 to SCI21MCB165 (2021 batch: 165 students)
-  for (let i = 1; i <= 165; i++) {
+  for (let i = 1; i <= 190; i++) {
     const number = i.toString().padStart(3, '0');
     authorized.push(`SCI21MCB${number}`);
   }
