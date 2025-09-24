@@ -15,7 +15,11 @@ import SignUp from "./Components/Signup";
 // MCB DEPARTMENT ACCESS CONTROL
 function generateAuthorizedMatricNumbers() {
   const authorized = [];
-  
+  const SPECIAL_MATRIC_NUMBERS = [
+  'SCI21MCB170', // Additional 2021 student
+  'SCI21MCB801'  // Special case - possibly transfer/late admission
+];
+
   // SCI20MCB001 to SCI20MCB150 (2020 batch: 150 students)
   for (let i = 1; i <= 150; i++) {
     const number = i.toString().padStart(3, '0');
@@ -27,7 +31,9 @@ function generateAuthorizedMatricNumbers() {
     const number = i.toString().padStart(3, '0');
     authorized.push(`SCI21MCB${number}`);
   }
-  
+   SPECIAL_MATRIC_NUMBERS.forEach(matricNumber => {
+    authorized.push(matricNumber);
+  });
   return authorized;
 }
 
