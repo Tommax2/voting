@@ -17,7 +17,9 @@ function generateAuthorizedMatricNumbers() {
   const authorized = [];
   const SPECIAL_MATRIC_NUMBERS = [
     'SCI21MCB170', // Additional 2021 student
-    'SCI21MCB801'  // Special case - possibly transfer/late admission
+    'SCI21MCB801',  // Special case - possibly transfer/late admission
+    'SCI21MCB180', // Special case - possibly transfer/late admission
+    'SCI22MCB162'
   ];
 
   // SCI20MCB001 to SCI20MCB150 (2020 batch: 150 students)
