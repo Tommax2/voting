@@ -32,7 +32,7 @@ function generateAuthorizedMatricNumbers() {
     authorized.push(`SCI21MCB${number}`);
   }
   
-  // ✅ ADD THE SPECIAL STUDENTS
+  // ADD THE SPECIAL STUDENTS
   SPECIAL_MATRIC_NUMBERS.forEach(matricNumber => {
     authorized.push(matricNumber);
   });
@@ -437,7 +437,7 @@ function App() {
         <h1>MCB DINNER NIGHT AWARD</h1>
         <div className="user-info">
           <span>Welcome, {user.matricNumber}</span>
-          {hasVoted && <span className="voted-badge">✅ Already Voted</span>}
+          {hasVoted && <span className="voted-badge">Already Voted</span>}
           <button onClick={handleLogout} className="logout-btn">
             Logout
           </button>
@@ -452,33 +452,23 @@ function App() {
 
       {hasVoted && submitted ? (
         <div className="success-container">
-          <h2>✅ Thank you for voting!</h2>
+          <h2>Thank you for voting!</h2>
           <p>Your votes have been recorded successfully.</p>
           <p className="vote-restriction-notice">
             <strong>Note:</strong> Each matric number can only vote once.
           </p>
-
-          <div className="results-section">
-            <h3>Current Results:</h3>
-            {questions.map((question) => (
-              <div key={question.$id} className="result-item">
-                <h4>{question.text}</h4>
-                <div className="result-stats">
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map(num => {
-                    const answer = question[`answer_${num}`];
-                    const votes = question[`votes_${num}`] || 0;
-                    if (!answer) return null;
-                    
-                    return (
-                      <div key={num} className="vote-option">
-                        <span className="option-name">{answer}</span>
-                        <span className="vote-count">({votes} votes)</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
+          
+          <div className="thank-you-message">
+            <h3>What happens next?</h3>
+            <p>The voting results will be announced during the MCB Dinner Night event.</p>
+            <p>Thank you for participating in selecting our award winners!</p>
+          </div>
+          
+          <div className="logout-suggestion">
+            <p>You can now safely close this page or log out.</p>
+            <button onClick={handleLogout} className="logout-btn">
+              Logout
+            </button>
           </div>
         </div>
       ) : (
@@ -554,7 +544,7 @@ window.checkMatric = function(matricNumber) {
 
 console.log("MCB Department Access Control initialized");
 console.log(`Total authorized students: ${AUTHORIZED_MATRIC_NUMBERS.length}`);
-console.log("Authorized ranges: SCI20MCB001-150, SCI21MCB001-200");
+console.log("Authorized ranges: SCI20MCB001-150, SCI21MCB001-165, plus special cases");
 console.log("Sample authorized matrics:", 
   AUTHORIZED_MATRIC_NUMBERS.slice(0, 3), 
   "...", 
